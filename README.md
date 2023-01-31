@@ -22,6 +22,7 @@ Mobiservant is an mobile application made using Flutter.
 
 Mobiservant is made for assistance. App uses OCR -component to increase text size or read the text aloud.
 Mobiservant also serves address navigation with OCR and Maps -component.
+
 **You can try the app by downloading and installing the apk: [Mobiservant.apk](https://drive.google.com/file/d/1nm8tapEYahU6lFFqWWqukHeWGX6yQspY/view?usp=share_link)**
 
 ## How to run project<a name = "use"></a>
