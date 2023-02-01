@@ -24,6 +24,7 @@ Mobiservant is made for assistance. App uses OCR -component to increase text siz
 Mobiservant can also attempt to recognize street address from text and provide navigation help with OCR and Google Maps.
 
 Mobiservant has no language support and is in Finnish only.
+
 **You can try the app on your Android device by downloading and installing the apk: [Mobiservant.apk](https://drive.google.com/file/d/1Ca8FZ0Rnq6NqKQCvlJ8mK2KnmYlYftY8/view?usp=sharing)**
 
 ## How to run project<a name = "use"></a>
