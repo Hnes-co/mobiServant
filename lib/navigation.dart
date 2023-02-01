@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:mobi_servant/ocr_class.dart';
 import 'package:mobi_servant/main.dart';
 import 'package:mobi_servant/ohjeet.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 
 class Navigate extends StatefulWidget {
   const Navigate({Key? key}) : super(key: key);
@@ -14,15 +15,24 @@ class Navigate extends StatefulWidget {
 
 class _NavigateState extends State<Navigate> {
   OcrClass ocr = OcrClass(fontSize: 12.0);
+  final flutterTts = FlutterTts();
 
   void launchURL() async {
-    final regexp = RegExp("[A-Z]\\S* [0-9]{1,3}");
+    final regexp = RegExp(
+        r'[A-Z][a-z]+\s[0-9]{1,3}\s+[0-9]{5}\s[A-Z][A-Za-z]+|[A-Z][a-z]+\s[0-9]{1,3}\s[A-Z]\s[0-9]{1,3}\s+[0-9]{5}\s[A-Z][A-Za-z]+');
     final match = regexp.firstMatch(ocr.getText());
-    String? destination = match?.group(0);
-    String url =
-        "https://www.google.com/maps/dir/?api=1&destination=" + destination!;
-    if (!await launch(url)) throw 'Could not launch $url';
+    if (match != null) {
+      String destination = match[0] ?? '';
+      String url =
+          "https://www.google.com/maps/dir/?api=1&destination=" + destination;
+      await launch(url);
+    } else {
+      String text = 'Osoitteen löytäminen tekstistä epäonnistui';
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
+      flutterTts.speak(text);
+    }
   }
+
   void newScan() {
     ocr.newScan();
   }
@@ -32,33 +42,29 @@ class _NavigateState extends State<Navigate> {
     return Scaffold(
       appBar: AppBar(title: const Text('Navigoi')),
       body: Column(children: <Widget>[
-        Expanded(
-            child: ocr
-        ),
+        Expanded(child: ocr),
         Row(
           children: <Widget>[
             Expanded(
-              child: Align(
-                alignment: Alignment.bottomLeft,
-                child: ReadTextButton(
-                  onPressed: launchURL,
-                  text: 'Hae reittiohjeet',
-                  icon: const Icon(Icons.navigation),
-                  color: const Color.fromARGB(255, 241, 247, 169),
-                ),
-              )
-            ),
+                child: Align(
+              alignment: Alignment.bottomLeft,
+              child: ReadTextButton(
+                onPressed: launchURL,
+                text: 'Hae reittiohjeet',
+                icon: const Icon(Icons.navigation),
+                color: const Color.fromARGB(255, 241, 247, 169),
+              ),
+            )),
             Expanded(
                 child: Align(
-                  alignment: Alignment.bottomRight,
-                  child: ReadTextButton(
-                    onPressed: newScan,
-                    text: 'Skannaa uudestaan',
-                    icon: const Icon(Icons.camera_alt),
-                    color: const Color.fromARGB(255, 246, 190, 240),
-                  ),
-                )
-            ),
+              alignment: Alignment.bottomRight,
+              child: ReadTextButton(
+                onPressed: newScan,
+                text: 'Skannaa uudestaan',
+                icon: const Icon(Icons.camera_alt),
+                color: const Color.fromARGB(255, 246, 190, 240),
+              ),
+            )),
           ],
         )
       ]),
@@ -93,10 +99,13 @@ class ReadTextButton extends StatelessWidget {
   final String text;
   final Icon icon;
   final Color color;
-  const ReadTextButton({
-    Key? key, required this.onPressed, required this.text,
-    required this.icon, required this.color
-  }) : super(key: key);
+  const ReadTextButton(
+      {Key? key,
+      required this.onPressed,
+      required this.text,
+      required this.icon,
+      required this.color})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
